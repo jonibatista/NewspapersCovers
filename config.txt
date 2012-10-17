@@ -1,0 +1,7 @@
+[
+	'abola': {
+		'url': 'http://www.abola.pt/dayOfWeek/wfotosdia/pagina.html', 
+		'paramid': 'dayOfWeek', 
+		'dir': '/Users/jbatista/Pictures/abola/'
+	}
+]
