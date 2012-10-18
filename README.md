@@ -15,6 +15,8 @@ Python script to download newspapers covers.
 * https://twitter.com/jonibatista
 
 ##License
+Copyright &copy; 2012 Jóni Batista.
+
 Licensed under the GNU General Public License (GPL), Version 3.0.
 
 You may obtain a copy of the License in the LICENSE file, or at:
