@@ -1,15 +1,20 @@
 #!/Library/Frameworks/Python.framework/Versions/3.3/bin/python3.3
 
-
 import json
 import os
 import datetime
 from datetime import timedelta
 import urllib.request
+import sys
+
 
 ## DEF CONSTANTS
 G_SRC_FOLDER =  "/Users/jbatista/Pictures/abola/"
 G_DAYS_OF_WEEK = ['wseg', 'wter', 'wqua', 'wqui', 'wset', 'wsab', 'wdom']
+
+
+
+## BEGIN
 
 ## load configuration from file
 file = open('config.txt', 'r') #specify file to open
@@ -25,7 +30,12 @@ for item in file.readlines():
 
 
 ## get last cover downloaded
-listCovers = os.listdir(G_SRC_FOLDER)
+try:
+    listCovers = os.listdir(G_SRC_FOLDER) 
+except:
+    print("Error! ", G_SRC_FOLDER, " - ", sys.exc_info()[0])
+    exit()
+
 lastDownload = ""
 
 ## get the date of the last cover

@@ -29,7 +29,7 @@ coversPerPage = [ [ 0 for i in range(G_COLUMNS_NUMBER) ] for j in range(G_ROWS_N
 try:
     listCovers = os.listdir(G_SRC_FOLDER) 
 except:
-    print("Error! ", sys.exc_info()[0])
+    print("Error! ", G_SRC_FOLDER, " - ", sys.exc_info()[0])
     exit()
 
 if len(listCovers) == 0:
