@@ -20,6 +20,7 @@ G_TOTAL_COVERS_PER_PAGE = G_ROWS_NUMBER * G_COLUMNS_NUMBER
 
 
 ## BEGIN
+print ("Starting the Record covers update on ", datetime.datetime.now())
 
 # Each html page have X newspaper covers, where x = G_COLUMNS_NUMBER * G_ROWS_NUMBER.
 # This is represented by a html table with G_ROWS_NUMBER rows and G_COLUMNS_NUMBER columns.
@@ -66,7 +67,6 @@ lackingDays = (datetime.date.today() - lastDownload).days
 
 if lackingDays < 1:
     print("Nothing new. No covers to download....")
-    exit()
 
 isPageChange = bool(1)
 for i in reversed(range(lackingDays)):
@@ -86,8 +86,6 @@ for i in reversed(range(lackingDays)):
         html = urllib.request.urlopen(url).read()
         # load the page into the DOM parser
         soup = BeautifulSoup(html)
-        # we just need to download the html when the page change, not to every cover in the current page
-        isPageChange = bool(0)
 
         # parse the html to extract the covers IDs
         divs = soup.findAll("div", {"class": "CartoonBox cursorPointer"}) # get image thumbnails container
@@ -103,24 +101,37 @@ for i in reversed(range(lackingDays)):
             temp = temp[1].split(")")
             coversPerPage[int(n/G_COLUMNS_NUMBER)][n - int(n/G_COLUMNS_NUMBER) * G_COLUMNS_NUMBER]=temp[0]
 
+        # we just need to download the html when the page change, not to every cover in the current page
+        isPageChange = bool(0)
+
     # Download the cover in the table(row, column) position
     #print (day, "-", coversPerPage[row][column])
     
     print ("Downloading record newspaper cover of " + str(day) + "...", end=" ")
     sys.stdout.flush()
 
-    # build the URL of the cover link
-    #coverUrl = 'http://www.record.xl.pt/capas/default.aspx?page=' + str(currentPage+1) + '&content_id=' + str(coversPerPage[row][column]) 
+    # build the URL to the render the page that contains the cover's image (size big)
+    url = 'http://www.record.xl.pt/capas/default.aspx?page=' + str(currentPage+1) + '&content_id=' + str(coversPerPage[row][column]) 
+  
+    # load page html to memory
+    html = urllib.request.urlopen(url).read()
+    
+    # parse the html to extract the image url
+    soup = BeautifulSoup(html)
+   
+    coverDiv = soup.find("div", {"class": "capa-grande-container"})
+    img = coverDiv.img['src']
+    urlImg = 'http://www.record.xl.pt' + str(img)
 
     # create desdination filename 'YYYYMMDD.jpeg'
     filename = str(day).replace("-", "") + ".jpeg"
    
     # create destination file
-    #f = open(G_SRC_FOLDER + filename, 'wb')
+    f = open(G_SRC_FOLDER + filename, 'wb')
 
     # download image and write it HDD
-    #f.write(urllib.request.urlopen(coverUrl).read())
-    #f.close()
+    f.write(urllib.request.urlopen(urlImg).read())
+    f.close()
 
     print ("ok!")
 
@@ -130,11 +141,5 @@ for i in reversed(range(lackingDays)):
         isPageChange = bool(1)
         coversPerPage = [ [ 0 for i in range(G_COLUMNS_NUMBER) ] for j in range(G_ROWS_NUMBER) ]
 
-
-# PRINT VAlUES - DEBUG        
-#for i in range(totalPages):
-    #temp = pages[i]
-    #for j in range(3):
-        #for x in range(4):
-            #print ("[", i, "]", temp[j][x])
-
+print ("Record's covers was successfully updated on ", datetime.datetime.now())
+# EDN OF SCRIPT
