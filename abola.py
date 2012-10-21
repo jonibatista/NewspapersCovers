@@ -15,6 +15,7 @@ G_DAYS_OF_WEEK = ['wseg', 'wter', 'wqua', 'wqui', 'wset', 'wsab', 'wdom']
 
 
 ## BEGIN
+print ("Starting the Abola covers update on ", datetime.datetime.now())
 
 ## load configuration from file
 file = open('config.txt', 'r') #specify file to open
@@ -97,4 +98,5 @@ while(today > lastDate and i > 0):
 	today -= timedelta(days=1)
 	i -=1
 
+print ("Abola's covers was successfully updated on ", datetime.datetime.now())
 # EDN OF SCRIPT
