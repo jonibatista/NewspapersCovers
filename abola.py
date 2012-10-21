@@ -70,11 +70,13 @@ today = datetime.date.today()
 
 if today == lastDate:
 	print("Nothing new. No covers to download....")
+	exit()
 
 i = 7 # the abola newspaper only allow us to backward 7 days  
 while(today > lastDate and i > 0):
 	
-	print ("Downloading abola new spaper cover of " + str(today) + "...")
+	print ("Downloading abola newspaper cover of " + str(today) + "...", end=" ")
+    sys.stdout.flush()
 
 	# build the URL of the cover link
 	url = 'http://www.abola.pt/' + G_DAYS_OF_WEEK[today.weekday()] + '/wfotosdia/wdiag.jpg'
