@@ -6,13 +6,15 @@ import datetime
 from datetime import timedelta
 import urllib.request
 import sys
+from bs4 import BeautifulSoup
+import string
 
 
 ## DEF CONSTANTS
 G_SRC_FOLDER =  "/Users/jbatista/Pictures/record/"
 G_ROWS_NUMBER = 3
 G_COLUMNS_NUMBER = 4
-G_TOTAL_PAGES = 10
+G_LIMIT_MAX_PAGES = 10
 G_TOTAL_COVERS_PER_PAGE = G_ROWS_NUMBER * G_COLUMNS_NUMBER
 
 
@@ -33,10 +35,10 @@ except:
     exit()
 
 if len(listCovers) == 0:
-    # directory is empty. We have to make a full download since page G_TOTAL_PAGES
+    # directory is empty. We have to make a full download since page G_LIMIT_MAX_PAGES
     # starting at X days ago... Full download.
-    lastDownload = datetime.date.today() - timedelta(days=(G_TOTAL_PAGES*G_TOTAL_COVERS_PER_PAGE-1))
-    startPage = G_TOTAL_PAGES
+    lastDownload = datetime.date.today() - timedelta(days=(G_LIMIT_MAX_PAGES*G_TOTAL_COVERS_PER_PAGE-1))
+    startPage = G_LIMIT_MAX_PAGES
 else:
     lastDownload = ""
     listCovers.sort()
@@ -55,23 +57,84 @@ else:
     except:
         # We aren't able to determinate what was the last cover downloaded.
         # starting at X days ago... Full download.
-        lastDownload = datetime.date.today() - timedelta(days=(G_TOTAL_PAGES*G_TOTAL_COVERS_PER_PAGE-1))
-        startPage = G_TOTAL_PAGES
+        lastDownload = datetime.date.today() - timedelta(days=(G_LIMIT_MAX_PAGES*G_TOTAL_COVERS_PER_PAGE-1))
+        startPage = G_LIMIT_MAX_PAGES
     
 
 # starting loop until all covers are downloaded
 lackingDays = (datetime.date.today() - lastDownload).days
+
+if lackingDays < 1:
+    print("Nothing new. No covers to download....")
+    exit()
+
+isPageChange = bool(1)
 for i in reversed(range(lackingDays)):
 
     currentPage = int(i/G_TOTAL_COVERS_PER_PAGE) # Current page number
     coversInThisPage = i - G_TOTAL_COVERS_PER_PAGE*currentPage# total covers to download in this current page
     row = int(coversInThisPage / G_COLUMNS_NUMBER)
     column = coversInThisPage - row * G_COLUMNS_NUMBER
-    #print ("page:", currentPage +1, "[", row, "] [", column, "]")
 
-    coversPerPage[row][column] = datetime.date.today() - timedelta(days=i)
+    #coversPerPage[row][column] = datetime.date.today() - timedelta(days=i)
+    day = datetime.date.today() - timedelta(days=i)
+    
+    if isPageChange:
+        # We must change the page
+        url = "http://www.record.xl.pt/capas/default.aspx?page=" + str(currentPage + 1)
+        # Create http request to get the new page source html content
+        html = urllib.request.urlopen(url).read()
+        # load the page into the DOM parser
+        soup = BeautifulSoup(html)
+        # we just need to download the html when the page change, not to every cover in the current page
+        isPageChange = bool(0)
 
-    temp = coversPerPage[row][column]
-    print ("page:", currentPage +1, "[", row, "] [", column, "] => ", temp)
+        # parse the html to extract the covers IDs
+        divs = soup.findAll("div", {"class": "CartoonBox cursorPointer"}) # get image thumbnails container
+        for n in range(len(divs)):
 
+            # We want the first line of each thumbnail container
+            # 1st line: <div> class="CartoonBox cursorPointer" onclick="PagerSetContent(&pageNumber, &coverID)">
+            # the cover ID is the 2nd argument of the javascript function 
+            line = divs[n].prettify()
+            lines = line.split('\n') 
+            temp = lines[0].split('PagerSetContent') 
+            temp = temp[1].split(', ')
+            temp = temp[1].split(")")
+            coversPerPage[int(n/G_COLUMNS_NUMBER)][n - int(n/G_COLUMNS_NUMBER) * G_COLUMNS_NUMBER]=temp[0]
+
+    # Download the cover in the table(row, column) position
+    #print (day, "-", coversPerPage[row][column])
+    
+    print ("Downloading record newspaper cover of " + str(day) + "...", end=" ")
+    sys.stdout.flush()
+
+    # build the URL of the cover link
+    #coverUrl = 'http://www.record.xl.pt/capas/default.aspx?page=' + str(currentPage+1) + '&content_id=' + str(coversPerPage[row][column]) 
+
+    # create desdination filename 'YYYYMMDD.jpeg'
+    filename = str(day.year) + str(day.month) + str(day.day)  + ".jpeg"
+       
+    # create destination file
+    #f = open(G_SRC_FOLDER + filename, 'wb')
+
+    # download image and write it HDD
+    #f.write(urllib.request.urlopen(coverUrl).read())
+    #f.close()
+
+    print ("ok!")
+
+
+    # All covers of the current page are downloaded. It's time to change to the next page
+    if coversInThisPage == 0:
+        isPageChange = bool(1)
+        coversPerPage = [ [ 0 for i in range(G_COLUMNS_NUMBER) ] for j in range(G_ROWS_NUMBER) ]
+
+
+# PRINT VAlUES - DEBUG        
+#for i in range(totalPages):
+    #temp = pages[i]
+    #for j in range(3):
+        #for x in range(4):
+            #print ("[", i, "]", temp[j][x])
 
