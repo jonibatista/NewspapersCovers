@@ -113,8 +113,8 @@ for i in reversed(range(lackingDays)):
     #coverUrl = 'http://www.record.xl.pt/capas/default.aspx?page=' + str(currentPage+1) + '&content_id=' + str(coversPerPage[row][column]) 
 
     # create desdination filename 'YYYYMMDD.jpeg'
-    filename = str(day.year) + str(day.month) + str(day.day)  + ".jpeg"
-       
+    filename = str(day).replace("-", "") + ".jpeg"
+   
     # create destination file
     #f = open(G_SRC_FOLDER + filename, 'wb')
 
