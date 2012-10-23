@@ -1,7 +1,3 @@
-[
-	'abola': {
-		'url': 'http://www.abola.pt/dayOfWeek/wfotosdia/pagina.html', 
-		'paramid': 'dayOfWeek', 
-		'dir': '/Users/jbatista/Pictures/abola/'
-	}
-]
+root_dir=/Users/jbatista/Pictures/
+share_src=true
+src=newspapers

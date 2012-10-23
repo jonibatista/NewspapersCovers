@@ -1,6 +1,4 @@
 #!/Library/Frameworks/Python.framework/Versions/3.3/bin/python3.3
-
-import json
 import os
 import datetime
 from datetime import timedelta
@@ -11,13 +9,14 @@ import string
 
 
 ## DEF CONSTANTS
-G_SRC_FOLDER =  "/Users/jbatista/Pictures/record/"
 G_ROWS_NUMBER = 3
 G_COLUMNS_NUMBER = 4
 G_LIMIT_MAX_PAGES = 10
 G_TOTAL_COVERS_PER_PAGE = G_ROWS_NUMBER * G_COLUMNS_NUMBER
-
-
+G_PARAM_DIR = "root_dir"
+G_PARAM_SHARED="share_src"
+G_PARAM_SRC="src"
+G_FILENAME_SUFFIX = "record" # number are not allowed!!!
 
 ## BEGIN
 print ("Starting the Record covers update on ", datetime.datetime.now())
@@ -28,12 +27,35 @@ print ("Starting the Record covers update on ", datetime.datetime.now())
 # All position are initiated with the value 0. This means that at this position we'll not download the cover.
 coversPerPage = [ [ 0 for i in range(G_COLUMNS_NUMBER) ] for j in range(G_ROWS_NUMBER) ]
 
+## load configuration from file
+file = open('config.txt', 'r') #specify file to open
+
+
+params = {}
+# parse the configuration file parameters
+for item in file.readlines():
+    temp = item.replace('\n', '').split('=')
+    params[str(temp[0])] = str(temp[1])
+
+# set the directory folder
+if params[G_PARAM_SHARED] == 'true':
+    srcFolder = params[G_PARAM_DIR] + "/" + params[G_PARAM_SRC] + "/"
+else:
+    srcFolder = params[G_PARAM_DIR] + "/" + "record/"
+
 ## get last cover downloaded
 try:
-    listCovers = os.listdir(G_SRC_FOLDER) 
+    if not os.path.exists(params[G_PARAM_DIR]):
+        print ("The " + params[G_PARAM_DIR] + " doen't exists")
+        exit()
+    elif not os.path.exists(srcFolder):
+        os.makedirs(srcFolder)
+
+    listCovers = os.listdir(srcFolder) 
 except:
-    print("Error! ", G_SRC_FOLDER, " - ", sys.exc_info()[0])
+    print("Error! ", srcFolder, " - ", sys.exc_info()[0])
     exit()
+
 
 if len(listCovers) == 0:
     # directory is empty. We have to make a full download since page G_LIMIT_MAX_PAGES
@@ -41,12 +63,16 @@ if len(listCovers) == 0:
     lastDownload = datetime.date.today() - timedelta(days=(G_LIMIT_MAX_PAGES*G_TOTAL_COVERS_PER_PAGE-1))
     startPage = G_LIMIT_MAX_PAGES
 else:
-    lastDownload = ""
     listCovers.sort()
-    ## get the date of the last cover
-    for i in listCovers[-1]:
+    for n in reversed(range(len(listCovers))):
+        lastDownload = ""
+        
+        for i in listCovers[n]:
             if i.isdigit():
-                    lastDownload = lastDownload + i
+                lastDownload = lastDownload + i
+
+        if G_FILENAME_SUFFIX in listCovers[n]: 
+            break
 
     try:
         year = abs(int(lastDownload)/10000) #YYYY.mmdd
@@ -124,10 +150,10 @@ for i in reversed(range(lackingDays)):
     urlImg = 'http://www.record.xl.pt' + str(img)
 
     # create desdination filename 'YYYYMMDD.jpeg'
-    filename = str(day).replace("-", "") + ".jpeg"
+    filename = str(day).replace("-", "") + "_" + G_FILENAME_SUFFIX + ".jpeg"
    
     # create destination file
-    f = open(G_SRC_FOLDER + filename, 'wb')
+    f = open(srcFolder + filename, 'wb')
 
     # download image and write it HDD
     f.write(urllib.request.urlopen(urlImg).read())
