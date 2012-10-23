@@ -16,8 +16,8 @@ The script will get the last cover downloaded in the path that you specify (conf
 
 2. Run the script of which newspaper you want, such as:
 
-	$ ./abola.py
-	
+	`$ ./abola.py`
+
 
 ##Available
 * <a href="http://www.abola.pt/" title="abola">abola</a>
