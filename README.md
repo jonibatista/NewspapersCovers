@@ -5,9 +5,11 @@ Python script to download newspapers covers.
 
 ##Available
 * <a href="http://www.abola.pt/" title="abola">abola</a>
+* <a href="http://www.record.xl.pt/" title="record">record</a>
+
 
 ##Workin on
-* <a href="http://www.record.xl.pt/" title="record">record</a>
+* ?
 
 #Authors
 <b>Jóni Batista</b>
