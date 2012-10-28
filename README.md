@@ -25,7 +25,7 @@ The script will get the last cover downloaded in the path that you specify (conf
 
 
 ##Workin on
-* what's next?
+* Correio da manhã
 
 #Authors
 <b>Jóni Batista</b>
