@@ -7,14 +7,14 @@ The script will get the last cover downloaded in the path that you specify (conf
 
 ##Getting started
 
-1. Open the config.txt file and configure your settings
+1) Open the config.txt file and configure your settings
 
 * <em><b>root_dir</b></em>: the root path that is used to store the downloaded covers. Depending on the <em>share_src</em> and <em>src</em> is added a folder to complete the path; 
 * <em><b>share_src</b></em>: a boolean that defines if all newspapers covers are placed in the same flolder (true) or in a different folder for each newspaper (the folder names is the name of the newspaper);
 * <em><b>src</b></em>: it defines the name of the shared folder for which all images are downloaded. This it's only used when the <em>share_src</em> parameter is set to true.
 
 
-2. Run the script of which newspaper you want, such as:
+2) Run the script of which newspaper you want, such as:
 
 	`$ ./abola.py`
 
