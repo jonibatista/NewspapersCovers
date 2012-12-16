@@ -22,10 +22,11 @@ The script will get the last cover downloaded in the path that you specify (conf
 ##Available
 * <a href="http://www.abola.pt/" title="abola">abola</a>
 * <a href="http://www.record.xl.pt/" title="record">record</a>
+* <a href="http://www.cmjornal.xl.pt" title="Correio da Manhã">Correio da Manhã</a>
 
 
 ##Workin on
-* Correio da manhã
+* What's next?
 
 #Authors
 <b>Jóni Batista</b>
