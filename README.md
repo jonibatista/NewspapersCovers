@@ -1,7 +1,7 @@
 NewspapersCovers
 ================
 
-Python 3.x script to download newspapers covers.
+Python 3.x script to download newspapers front pages.
 
 The script will get the last cover downloaded in the path that you specify (config.txt file) and it calulates the missing covers, then the covers available are downloaded.
 
