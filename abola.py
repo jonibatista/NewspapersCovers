@@ -9,41 +9,28 @@ import sys
 ## DEF CONSTANTS
 G_DAYS_OF_WEEK = ['wseg', 'wter', 'wqua', 'wqui', 'wset', 'wsab', 'wdom']
 G_FILENAME_SUFFIX = "abola" # number are not allowed!!!
-G_PARAM_DIR = "root_dir"
-G_PARAM_SHARED="share_src"
-G_PARAM_SRC="src"
+ABOLA = 'A Bola'
 
-## BEGIN
-print ("Starting the Abola covers update on ", datetime.datetime.now())
+# load configuration from config.txt
+configs = {}
+f = open('config.txt', 'r')
+for line in f.readlines():
+    line = line.replace('\n', '')
+    if not line.startswith('#') and line != '':
+        temp = line.split('=')
+        configs[temp[0]] = temp[1]
 
-## load configuration from file
-file = open('config.txt', 'r') #specify file to open
+# set download paths
+root_dir = configs['root_dir']
+if not configs['share_src'].lower() == 'true':
+    root_dir += configs[ABOLA]
 
-params = {}
-# parse the configuration file parameters
-for item in file.readlines():
-	temp = item.replace('\n', '').split('=')
-	params[str(temp[0])] = str(temp[1])
+if not os.path.exists(root_dir):
+    os.makedirs(root_dir)
 
-# set the directory folder
-if params[G_PARAM_SHARED] == 'true':
-	srcFolder = params[G_PARAM_DIR] + "/" + params[G_PARAM_SRC] + "/"
-else:
-	srcFolder = params[G_PARAM_DIR] + "/" + "abola/"
 
 ## get last cover downloaded
-try:
-	if not os.path.exists(params[G_PARAM_DIR]):
-		print ("The " + params[G_PARAM_DIR] + " doen't exists")
-		exit()
-	elif not os.path.exists(srcFolder):
-		os.makedirs(srcFolder)
-
-	listCovers = os.listdir(srcFolder) 
-except:
-    print("Error! ", srcFolder, " - ", sys.exc_info()[0])
-    exit()
-
+listCovers = os.listdir(root_dir)
 
 ## get the date of the last cover
 if len(listCovers) > 0:
@@ -56,7 +43,7 @@ if len(listCovers) > 0:
 			if i.isdigit():
 				lastDownload = lastDownload + i
 
-		if G_FILENAME_SUFFIX in listCovers[n]: 
+		if G_FILENAME_SUFFIX in listCovers[n]:
 			break
 
 	try:
@@ -75,39 +62,38 @@ else:
 		#download all covers, a complete week....
 		lastDate = datetime.date.today() - timedelta(days=7)
 
+print ("[{}] Downloading A Bola newspaper front pages...".format(datetime.datetime.now()))
 
 ## get the curent date
 today = datetime.date.today()
-#now = datetime.date(today.year, today.month, today.day)
-
 if today == lastDate:
 	print("Nothing new. No covers to download....")
 	exit()
 
-i = 7 # the abola newspaper only allow us to backward 7 days  
+i = 7 # the abola newspaper only allow us to backward 7 days
 while(today > lastDate and i > 0):
-	
-	print ("Downloading abola newspaper cover of " + str(today) + "...", end=" ")
+
+	print ("Downloading A Bola newspaper's front page of " + str(today) + "...", end=" ")
 	sys.stdout.flush()
 
 	# build the URL of the cover link
 	url = 'http://www.abola.pt/' + G_DAYS_OF_WEEK[today.weekday()] + '/wfotosdia/wdiag.jpg'
 
 	# create desdination filename 'YYYYMMDD.jpeg'
-	filename = str(today).replace("-", "") + "_" + G_FILENAME_SUFFIX + ".jpeg"
-	
+	filename = str(today).replace("-", "") + "_" + ABOLA.replace(' ', '_') + ".jpeg"
+
 	# create destination file
-	f = open(srcFolder + filename, 'wb')
+	f = open(root_dir + filename, 'wb')
 
 	# download image and write it HDD
 	f.write(urllib.request.urlopen(url).read())
 	f.close()
 
 	print ("done!")
-	
+
 	# done, lets go back one more day
 	today -= timedelta(days=1)
 	i -=1
 
-print ("Abola's covers was successfully updated on ", datetime.datetime.now())
-# EDN OF SCRIPT
+print ("[{}] done!".format(datetime.datetime.now()))
+

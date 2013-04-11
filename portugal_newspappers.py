@@ -1,14 +1,24 @@
 #!/Library/Frameworks/Python.framework/Versions/3.3/bin/python3.3
 import urllib.request
 import datetime
+import os
 from bs4 import BeautifulSoup
 
-root_dir='/Users/jbatista/Pictures/newspapers/'
-sports='sports/'
-news='news/'
-abola='A Bola'
-record='Record'
-jogo='O Jogo'
+# load configuration from config.txt
+configs = {}
+f = open('config.txt', 'r')
+for line in f.readlines():
+    line = line.replace('\n', '')
+    if not line.startswith('#') and line != '':
+        temp = line.split('=')
+        configs[temp[0]] = temp[1]
+
+# set download paths
+root_dir = configs['root_dir']
+if configs['share_src'].lower() == 'true':
+    is_share_folder = True
+else:
+    is_share_folder = False
 
 # get request html page
 response = urllib.request.urlopen('http://www.tvtuga.com').read()
@@ -22,19 +32,19 @@ for newspapper in html.find_all('div', class_='img'):
     url = newspapper.a.get('href')
     urls[desc.text] = url
 
-print ("[{}] Downloading the today's nespapers covers...".format(datetime.datetime.now()))
+print ("[{}] Downloading the today's newspapers front pages...".format(datetime.datetime.now()))
 for key in urls:
     # create destination filename 'YYYYMMDD_newspapper.jpeg'
     today = datetime.date.today()
     filename = str(today).replace("-", "") + "_" + key.replace(' ', '_') + ".jpeg"
 
     path = root_dir
-    if key == abola or key == record or key == jogo:
-        path += sports
-    else:
-        path += news
+    if not is_share_folder:
+        path += configs[key]
 
     # create destination file
+    if not os.path.exists(path):
+        os.makedirs(path)
     f = open(path + filename, 'wb')
 
     # download image and write it HDD
@@ -44,5 +54,5 @@ for key in urls:
 
     print ('Download complete: ' + str(key))
 
-print ("done!")
+print ("[{}] done!".format(datetime.datetime.now()))
 
