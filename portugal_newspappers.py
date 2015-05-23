@@ -1,4 +1,4 @@
-#!/Library/Frameworks/Python.framework/Versions/3.3/bin/python3.3
+#!/Library/Frameworks/Python.framework/Versions/3.4/bin/python3.4
 import urllib.request
 import datetime
 import os
@@ -40,7 +40,11 @@ for key in urls:
 
     path = root_dir
     if not is_share_folder:
-        path += configs[key]
+        try:
+            path += configs[key]
+        except:
+            print("Error when downloading the ", filename)
+            continue
 
     # create destination file
     if not os.path.exists(path):

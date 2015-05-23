@@ -3,6 +3,7 @@ share_src=false
 
 # folders, only used if share_src is not true
 Correio da Manhã=news/
+Destak=news/
 Público=news/
 Jornal de Notícias=news/
 Jornal i=news/
