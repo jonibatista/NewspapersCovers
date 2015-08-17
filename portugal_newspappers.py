@@ -23,14 +23,15 @@ else:
 # get request html page
 response = urllib.request.urlopen('http://www.tvtuga.com').read()
 soup = BeautifulSoup(response)
-html = soup.find(id='subfooter-inner')
+html = soup.find(id='footer')
 
 # urls' covers
 urls = {}
-for newspapper in html.find_all('div', class_='img'):
-    desc = newspapper.find('div', class_='desc')
-    url = newspapper.a.get('href')
-    urls[desc.text] = url
+coversDiv = html.find_all('div', class_='capasimg')[0]
+for newspaper in coversDiv.find_all('a'):
+    desc = newspaper.get("title")
+    url = newspaper.img.get('src')
+    urls[desc] = url
 
 print ("[{}] Downloading the today's newspapers front pages...".format(datetime.datetime.now()))
 for key in urls:
