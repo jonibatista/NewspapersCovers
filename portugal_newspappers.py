@@ -31,6 +31,7 @@ coversDiv = html.find_all('div', class_='capasimg')[0]
 for newspaper in coversDiv.find_all('a'):
     desc = newspaper.get("title")
     url = newspaper.img.get('src')
+    url = url.replace('thumbs/', '')
     urls[desc] = url
 
 print ("[{}] Downloading the today's newspapers front pages...".format(datetime.datetime.now()))
