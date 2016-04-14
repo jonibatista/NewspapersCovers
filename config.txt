@@ -13,6 +13,7 @@ Diário Económico=news/
 A Bola=sports/
 Record=sports/
 O Jogo=sports/
+Marca=sports/
 Lance RJ=sports/
 O Globo=news/
 Folha S. Paulo=news/
